@@ -113,7 +113,7 @@ namespace QuantConnect.Lean.Launcher
                 leanEngineSystemHandlers.Api.SetAlgorithmStatus(job.AlgorithmId, AlgorithmStatus.RuntimeError, _collapseMessage);
                 leanEngineSystemHandlers.Notify.SetAuthentication(job);
                 leanEngineSystemHandlers.Notify.Send(new RuntimeErrorPacket(job.UserId, job.AlgorithmId, _collapseMessage));
-                leanEngineSystemHandlers.JobQueue.AcknowledgeJob(job);
+                //leanEngineSystemHandlers.JobQueue.AcknowledgeJob(job);
                 return;
             }
 
@@ -129,7 +129,7 @@ namespace QuantConnect.Lean.Launcher
             finally
             {
                 //Delete the message from the job queue:
-                leanEngineSystemHandlers.JobQueue.AcknowledgeJob(job);
+                //leanEngineSystemHandlers.JobQueue.AcknowledgeJob(job);
                 Log.Trace("Engine.Main(): Packet removed from queue: " + job.AlgorithmId);
 
                 // clean up resources
