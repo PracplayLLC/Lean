@@ -203,12 +203,15 @@ namespace QuantConnect.Util
                 // grab assemblies from current executing directory
                 var catalogs = new List<ComposablePartCatalog>
                 {
-                    new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.dll"),
-                    new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.exe")
+                    //new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.dll"),
+		    new SafeDirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.dll"),
+                    //new DirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.exe")
+		    new SafeDirectoryCatalog(AppDomain.CurrentDomain.BaseDirectory, "*.exe")
                 };
                 if (!string.IsNullOrWhiteSpace(PluginDirectory) && Directory.Exists(PluginDirectory) && new DirectoryInfo(PluginDirectory).FullName != AppDomain.CurrentDomain.BaseDirectory)
                 {
-                    catalogs.Add(new DirectoryCatalog(PluginDirectory, "*.dll"));
+                    //catalogs.Add(new DirectoryCatalog(PluginDirectory, "*.dll"));
+		    catalogs.Add(new SafeDirectoryCatalog(PluginDirectory, "*.dll"));
                 }
                 var aggregate = new AggregateCatalog(catalogs);
                 _compositionContainer = new CompositionContainer(aggregate);
@@ -216,4 +219,45 @@ namespace QuantConnect.Util
             }
         }
     }
+
+public class SafeDirectoryCatalog : ComposablePartCatalog
+{
+    private readonly AggregateCatalog _catalog;
+
+    public SafeDirectoryCatalog(string directory, string pattern = "*.dll")
+    {
+        var files = Directory.EnumerateFiles(directory, pattern, SearchOption.AllDirectories);
+
+        _catalog = new AggregateCatalog();
+
+        foreach (var file in files)
+        {
+            try
+            {
+                var asmCat = new AssemblyCatalog(file);
+
+                //Force MEF to load the plugin and figure out if there are any exports
+                // good assemblies will not throw the RTLE exception and can be added to the catalog
+                if (asmCat.Parts.ToList().Count > 0)
+                    _catalog.Catalogs.Add(asmCat);
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+		Log.Error("error discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+            }
+	    catch (TypeLoadException ex)
+	    {
+		Log.Error("error discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+	    }
+            catch (BadImageFormatException ex)
+            {
+		Log.Error("error discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+            }
+        }
+    }
+    public override IQueryable<ComposablePartDefinition> Parts
+    {
+        get { return _catalog.Parts; }
+    }
+}
 }
