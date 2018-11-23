@@ -263,8 +263,8 @@ public class SafeDirectoryCatalog : ComposablePartCatalog
 	    }
 	    catch (Exception ex)
 	    {
-		Log.Error("error, unhandled exception during qc-lean plugin discovery.  these errors should not generally be fatal, so may want to catch this specific exception."+ex.GetType().Name+ex.Message+ex.StackTrace);
-		throw ex;
+		Log.Trace("warning, unhandled exception during qc-lean plugin discovery.  these errors should not generally be fatal, so may want to catch this specific exception."+ex.GetType().Name+ex.Message+ex.StackTrace);
+//		throw ex;
 	    }
         }
     }
