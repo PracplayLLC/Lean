@@ -243,16 +243,25 @@ public class SafeDirectoryCatalog : ComposablePartCatalog
             }
             catch (ReflectionTypeLoadException ex)
             {
-		Log.Error("error discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+		Log.Error("warning reflection-type-load problem discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
             }
 	    catch (TypeLoadException ex)
 	    {
-		Log.Error("error discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+		Log.Error("warning type-load problem discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
 	    }
             catch (BadImageFormatException ex)
             {
-		Log.Error("error discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+		Log.Error("warning bad-image discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
             }
+	    catch (FileNotFoundException ex)
+	    {
+		Log.Error("warning file-not-found discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+	    }
+	    catch (Exception ex)
+	    {
+		Log.Error("error, unhandled exception during qc-lean plugin discovery.  these errors should not generally be fatal, so may want to catch this specific exception.");
+		throw ex;
+	    }
         }
     }
     public override IQueryable<ComposablePartDefinition> Parts
