@@ -243,23 +243,27 @@ public class SafeDirectoryCatalog : ComposablePartCatalog
             }
             catch (ReflectionTypeLoadException ex)
             {
-		Log.Error("warning reflection-type-load problem discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+		Log.Trace("warning reflection-type-load problem discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
             }
 	    catch (TypeLoadException ex)
 	    {
-		Log.Error("warning type-load problem discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+		Log.Trace("warning type-load problem discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
 	    }
             catch (BadImageFormatException ex)
             {
-		Log.Error("warning bad-image discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+		Log.Trace("warning bad-image discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
             }
 	    catch (FileNotFoundException ex)
 	    {
-		Log.Error("warning file-not-found discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+		Log.Trace("warning file-not-found discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
+	    }
+	    catch (ArgumentException ex)
+	    {
+		Log.Trace("warning argument-exception discovering plugin types: "+ex.GetType().Name+ex.Message+ex.StackTrace);
 	    }
 	    catch (Exception ex)
 	    {
-		Log.Error("error, unhandled exception during qc-lean plugin discovery.  these errors should not generally be fatal, so may want to catch this specific exception.");
+		Log.Error("error, unhandled exception during qc-lean plugin discovery.  these errors should not generally be fatal, so may want to catch this specific exception."+ex.GetType().Name+ex.Message+ex.StackTrace);
 		throw ex;
 	    }
         }
