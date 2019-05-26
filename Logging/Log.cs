@@ -108,13 +108,14 @@ namespace QuantConnect.Logging
         { 
             try 
             {
+		if (traceText==null) return;
                 if (traceText == _lastTraceText && !overrideMessageFloodProtection) return;
                 _logHandler.Trace(traceText);
                 _lastTraceText = traceText;
             } 
             catch (Exception err) 
             {
-                Console.WriteLine("Log.Trace(): Error writing trace: "  +err.Message);
+                Console.WriteLine("Log.Trace(): Error writing trace: "  +err.GetType().Name+err.Message+err.StackTrace);
             }
         }
 
