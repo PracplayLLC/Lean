@@ -108,7 +108,7 @@ namespace QuantConnect.Logging
         { 
             try 
             {
-		if (traceText==null) return;
+		if (_logHandler==null) return;
                 if (traceText == _lastTraceText && !overrideMessageFloodProtection) return;
                 _logHandler.Trace(traceText);
                 _lastTraceText = traceText;
