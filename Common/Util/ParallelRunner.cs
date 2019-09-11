@@ -79,6 +79,8 @@ namespace QuantConnect.Util
         public void Start(CancellationToken token)
         {
             WaitHandle[] waitHandles;
+		if (_sync!=null) {
+	
             lock (_sync)
             {
                 if (_workers[0] != null) return;
@@ -108,6 +110,7 @@ namespace QuantConnect.Util
 
             _processQueueThread = new Thread(() => ProcessHoldQueue(token)) { IsBackground = true };
             _processQueueThread.Start();
+	}// end of _sync null test
         }
 
         /// <summary>
